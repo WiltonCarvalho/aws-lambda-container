@@ -7,6 +7,7 @@ sudo pip3 install cookiecutter
 cookiecutter https://github.com/aws/aws-sam-cli-app-templates.git --no-input \
   --directory java11-image/cookiecutter-aws-sam-hello-java-gradle-lambda-image \
   project_name=test
+
 cd test/HelloWorldFunction
 ```
 ### - Dockerfile from https://gallery.ecr.aws/lambda/java
@@ -37,29 +38,50 @@ task copyRuntimeDependencies(type: Copy) {
 build.dependsOn copyRuntimeDependencies
 EOF
 ```
+### - Docker Build and Test
+```
+docker build -t test .
+docker run -it --rm -p 9000:8080 test
+
+curl -s -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
+  -d '{"payload":"hello world!"}' | jq -r .body
+```
 # Golang Demo
 ```
 cookiecutter https://github.com/aws/aws-sam-cli-app-templates.git --no-input \
   --directory go1.x-image/cookiecutter-aws-sam-hello-golang-lambda-image \
   project_name=test
+
 cd test/hello-world
+
+docker build -t test .
+docker run -it --rm -p 9000:8080 test
+
+curl -s -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
+  -d '{"payload":"hello world!"}' | jq -r .body
 ```
 # NodeJS Demo
 ```
 cookiecutter https://github.com/aws/aws-sam-cli-app-templates.git --no-input \
   --directory nodejs16.x-image/cookiecutter-aws-sam-hello-nodejs-lambda-image \
   project_name=test
+
 cd test/hello-world
+
+docker build -t test .
+docker run -it --rm -p 9000:8080 test
+
+curl -s -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
+  -d '{"payload":"hello world!"}' | jq -r .body
 ```
 # Python Demo
 ```
 cookiecutter https://github.com/aws/aws-sam-cli-app-templates.git --no-input \
   --directory python3.9-image/cookiecutter-aws-sam-hello-python-lambda-image \
   project_name=test
+
 cd test/hello_world
-```
-# Docker Build and Test
-```
+
 docker build -t test .
 docker run -it --rm -p 9000:8080 test
 
