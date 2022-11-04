@@ -2,16 +2,16 @@
 ```
 sudo pip3 install cookiecutter
 ```
-## Java Demo
+# Java Demo
 ```
 cookiecutter https://github.com/aws/aws-sam-cli-app-templates.git --no-input \
   --directory java11-image/cookiecutter-aws-sam-hello-java-gradle-lambda-image \
   project_name=test
 cd test/HelloWorldFunction
 ```
-## Dockerfile from https://gallery.ecr.aws/lambda/java
+### - Dockerfile from https://gallery.ecr.aws/lambda/java
 ```
-cat <<'EOF'> Dockerfile.podman
+cat <<'EOF'> Dockerfile
 FROM public.ecr.aws/lambda/java:11 as build-image
 COPY src/ src/
 COPY gradle/ gradle/
@@ -26,7 +26,7 @@ COPY --from=build-image ${LAMBDA_TASK_ROOT}/build/classes/java/main ${LAMBDA_TAS
 CMD ["helloworld.App::handleRequest"]
 EOF
 ```
-## Gradle task from https://gallery.ecr.aws/lambda/java
+### - Gradle task from https://gallery.ecr.aws/lambda/java
 ```
 cat <<'EOF'>> build.gradle
 // prepare the runtime dependencies
@@ -37,7 +37,28 @@ task copyRuntimeDependencies(type: Copy) {
 build.dependsOn copyRuntimeDependencies
 EOF
 ```
-## Docker Build and Test
+# Golang Demo
+```
+cookiecutter https://github.com/aws/aws-sam-cli-app-templates.git --no-input \
+  --directory go1.x-image/cookiecutter-aws-sam-hello-golang-lambda-image \
+  project_name=test
+cd test/hello-world
+```
+# NodeJS Demo
+```
+cookiecutter https://github.com/aws/aws-sam-cli-app-templates.git --no-input \
+  --directory nodejs16.x-image/cookiecutter-aws-sam-hello-nodejs-lambda-image \
+  project_name=test
+cd test/hello-world
+```
+# Python Demo
+```
+cookiecutter https://github.com/aws/aws-sam-cli-app-templates.git --no-input \
+  --directory python3.9-image/cookiecutter-aws-sam-hello-python-lambda-image \
+  project_name=test
+cd test/hello_world
+```
+# Docker Build and Test
 ```
 docker build -t test .
 docker run -it --rm -p 9000:8080 test
