@@ -1,0 +1,25 @@
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3();
+exports.lambdaHandler = async (event, context) =>{
+  console.log(JSON.stringify(event));
+  console.log(JSON.stringify(context));
+  const params = {
+    Bucket: event.Records[0].s3.bucket.name,
+    Key: event.Records[0].s3.object.key
+  };
+  // get file from s3
+  const data = await s3.getObject(params).promise();
+  console.log(data);
+  // put file to s3
+  const buffer = Buffer.from(data['Body']);
+  const output_bucket = process.env.OUTPUT_BUCKET;
+  const upload_params = {
+    Bucket: output_bucket,
+    Key: event.Records[0].s3.object.key,
+    ContentType: 'text/csv',
+    Metadata: {},
+    Body: buffer
+  };
+  const upload = await s3.putObject(upload_params).promise();
+  console.log(upload);
+};
