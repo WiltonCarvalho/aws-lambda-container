@@ -4,7 +4,9 @@ sudo pip3 install cookiecutter
 ```
 ## Java Demo
 ```
-cookiecutter https://github.com/aws/aws-sam-cli-app-templates.git --directory java11-image/cookiecutter-aws-sam-hello-java-gradle-lambda-image --no-input project_name=test
+cookiecutter https://github.com/aws/aws-sam-cli-app-templates.git --no-input \
+  --directory java11-image/cookiecutter-aws-sam-hello-java-gradle-lambda-image \
+  project_name=test
 cd test/HelloWorldFunction
 ```
 ## Dockerfile from https://gallery.ecr.aws/lambda/java
@@ -40,5 +42,6 @@ EOF
 docker build -t test .
 docker run -it --rm -p 9000:8080 test
 
-curl -s -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"payload":"hello world!"}' | jq -r .body
+curl -s -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
+  -d '{"payload":"hello world!"}' | jq -r .body
 ```
