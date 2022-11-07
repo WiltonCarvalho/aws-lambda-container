@@ -30,12 +30,23 @@ EOF
 ### - Gradle task from https://gallery.ecr.aws/lambda/java
 ```
 cat <<'EOF'>> build.gradle
+
 // prepare the runtime dependencies
 task copyRuntimeDependencies(type: Copy) {
     from configurations.runtimeClasspath
     into 'build/dependency'
 }
 build.dependsOn copyRuntimeDependencies
+
+task buildZip(type: Zip) {
+    from compileJava
+    from processResources
+    into('lib') {
+        from configurations.runtimeClasspath
+    }
+}
+
+build.dependsOn buildZip
 EOF
 ```
 ### - Docker Build and Test
