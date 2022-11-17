@@ -54,9 +54,9 @@ docker build -t test .
 ```
 docker run -it --rm --name test -p 9000:8080 \
   -v $HOME/.aws:/.aws:ro \
-  -e AWS_PROFILE='default' \
-  -e AWS_SHARED_CREDENTIALS_FILE='/.aws/credentials' \
-  -e AWS_DEFAULT_REGION='sa-east-1' \
+  -e AWS_PROFILE="${AWS_PROFILE:-default}" \
+  -e AWS_SHARED_CREDENTIALS_FILE="/.aws/credentials" \
+  -e AWS_DEFAULT_REGION="sa-east-1" \
   test
 ```
 ```
