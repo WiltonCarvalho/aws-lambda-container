@@ -13,16 +13,10 @@ cd test/HelloWorldFunction
 ### - Dockerfile from https://gallery.ecr.aws/lambda/java
 ```
 cat <<'EOF'> Dockerfile
-FROM public.ecr.aws/lambda/java:11 as build-image
-COPY src/ src/
-COPY gradle/ gradle/
-COPY build.gradle gradlew ./
-RUN ./gradlew build
-
 FROM public.ecr.aws/lambda/java:11
 # Copy function code and runtime dependencies from Gradle layout
-COPY --from=build-image ${LAMBDA_TASK_ROOT}/build/dependency/* ${LAMBDA_TASK_ROOT}/lib/
-COPY --from=build-image ${LAMBDA_TASK_ROOT}/build/classes/java/main ${LAMBDA_TASK_ROOT}
+COPY build/dependency/* ${LAMBDA_TASK_ROOT}/lib/
+COPY build/classes/java/main ${LAMBDA_TASK_ROOT}
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
 CMD ["helloworld.App::handleRequest"]
 EOF
@@ -44,16 +38,28 @@ task buildZip(type: Zip) {
     into('lib') {
         from configurations.runtimeClasspath
     }
+    //archiveFileName = "package.zip"
+    destinationDirectory = file("$buildDir/libs")
 }
 
 build.dependsOn buildZip
 EOF
 ```
-### - Docker Build and Test
+### - Build and Test
 ```
-docker build -t test .
-docker run -it --rm -p 9000:8080 test
+./gradlew clean build
 
+docker build -t test .
+```
+```
+docker run -it --rm --name test -p 9000:8080 \
+  -v $HOME/.aws:/.aws:ro \
+  -e AWS_PROFILE='default' \
+  -e AWS_SHARED_CREDENTIALS_FILE='/.aws/credentials' \
+  -e AWS_DEFAULT_REGION='sa-east-1' \
+  test
+```
+```
 curl -s -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
   -d '{"payload":"hello world!"}' | jq -r .body
 ```
